@@ -10,6 +10,9 @@ import zlib
 from functools import partial
 from http import HTTPStatus
 from pathlib import Path
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 import aiohttp_jinja2
 import jinja2
@@ -62,6 +65,7 @@ CONFIG = "config"
 THEME_SETTINGS = "theme_settings"
 
 ALL = "_all"
+ALL_CONTAINER_LOGS = ""
 
 ONE_WEEK = 7 * 24 * 60 * 60
 FIVE_MINUTES = 5 * 60
@@ -772,10 +776,28 @@ async def get_resource_view(request, session):
 
     owners = []
     for ref in resource.metadata.get("ownerReferences", []):
-        owner_class = await cluster.resource_registry.get_class_by_api_version_kind(
-            ref["apiVersion"], ref["kind"], namespaced=bool(namespace)
-        )
-        owners.append({"name": ref["name"], "class": owner_class})
+        # namespaced object might have non-namespaced owner (e.g. "Node")
+        namespaced = bool(namespace)
+        for i in range(2):
+            try:
+                owner_class = await cluster.resource_registry.get_class_by_api_version_kind(
+                    ref["apiVersion"], ref["kind"], namespaced=namespaced
+                )
+                owners.append(
+                    {
+                        "name": ref["name"],
+                        "class": owner_class,
+                        "namespaced": namespaced,
+                    }
+                )
+            except ResourceTypeNotFound:
+                if namespaced and i == 0:
+                    # retry to find non-namespaced resource type
+                    namespaced = False
+                else:
+                    raise
+            else:
+                break
 
     selector = field_selector = None
     if resource.kind == "Node":
@@ -877,7 +899,7 @@ async def get_resource_view(request, session):
     return context
 
 
-def pod_color(name):
+def pod_color(name: Optional[str]) -> str:
     """Return HTML color calculated from given pod name."""
 
     if name is None:
@@ -889,6 +911,38 @@ def pod_color(name):
     return "#%02x%02x%02x" % (int(r * 255), int(g * 255), int(b * 255))
 
 
+async def get_log_from_container(
+    color: str,
+    pod: Pod,
+    container_name: str,
+    tail_lines: int,
+    filter_text: Optional[str],
+):
+    """Return array of logs of single container."""
+
+    logs: List[Tuple[str, str, str, str]] = []
+    container_log = await kubernetes.logs(
+        pod, container=container_name, timestamps=True, tail_lines=tail_lines,
+    )
+    for line in container_log.split("\n"):
+        # note that the filter is case-sensitive!
+        if filter_text and filter_text not in line:
+            continue
+        # this is a hacky way to determine whether it's a multi-line log message
+        # (our current year of the timestamp starts with "20"..)
+        if line.startswith("20") or not logs:
+            logs.append((line, pod.name, color, container_name))
+        else:
+            logs[-1] = (
+                logs[-1][0] + "\n" + line,
+                pod.name,
+                color,
+                container_name,
+            )
+
+    return logs
+
+
 @routes.get("/clusters/{cluster}/namespaces/{namespace}/{plural}/{name}/logs")
 @aiohttp_jinja2.template("resource-logs.html")
 @context()
@@ -897,7 +951,9 @@ async def get_resource_logs(request, session):
     namespace = get_and_validate_namespace_parameter(request)
     plural = request.match_info["plural"]
     name = request.match_info["name"]
+    container_name = request.query.get("container") or ALL_CONTAINER_LOGS
     tail_lines = int(request.rel_url.query.get("tail_lines") or 200)
+    filter_text = request.query.get("filter")
     clazz = await cluster.resource_registry.get_class_by_plural_name(
         plural, namespaced=True
     )
@@ -918,38 +974,38 @@ async def get_resource_logs(request, session):
         raise web.HTTPNotFound(text="Resource has no logs")
 
     logs = []
+    all_container_names = set([ALL_CONTAINER_LOGS])
+
+    for pod in pods:
+        if "initContainers" in pod.obj["spec"]:
+            for container in pod.obj["spec"]["initContainers"]:
+                all_container_names.add(container["name"])
+        for container in pod.obj["spec"]["containers"]:
+            all_container_names.add(container["name"])
 
     show_container_logs = request.app[CONFIG].show_container_logs
     if show_container_logs:
         for pod in pods:
             color = pod_color(pod.name)
-            containers = pod.obj["spec"]["containers"]
-
-            if "initContainers" in pod.obj["spec"]:
-                containers += pod.obj["spec"]["initContainers"]
-
-            for container in containers:
-                try:
-                    container_log = await kubernetes.logs(
-                        pod,
-                        container=container["name"],
-                        timestamps=True,
-                        tail_lines=tail_lines,
+            if container_name != ALL_CONTAINER_LOGS:
+                logs.extend(
+                    await get_log_from_container(
+                        color, pod, container_name, tail_lines, filter_text
                     )
-                    for line in container_log.split("\n"):
-                        # this is a hacky way to determine whether it's a multi-line log message
-                        # (our current year of the timestamp starts with "20"..)
-                        if line.startswith("20") or not logs:
-                            logs.append((line, pod.name, color, container["name"]))
-                        else:
-                            logs[-1] = (
-                                logs[-1][0] + "\n" + line,
-                                pod.name,
-                                color,
-                                container["name"],
-                            )
-                except requests.exceptions.HTTPError as e:
-                    logger.info(f"Container not Found: {e}")
+                )
+            else:
+                # show logs for all containers
+                containers = pod.obj["spec"]["containers"]
+
+                if "initContainers" in pod.obj["spec"]:
+                    containers += pod.obj["spec"]["initContainers"]
+
+                for container in containers:
+                    logs.extend(
+                        await get_log_from_container(
+                            color, pod, container["name"], tail_lines, filter_text
+                        )
+                    )
 
     logs.sort()
 
@@ -959,9 +1015,12 @@ async def get_resource_logs(request, session):
         "plural": plural,
         "resource": resource,
         "tail_lines": tail_lines,
+        "filter_text": filter_text,
         "pods": pods,
         "logs": logs,
         "show_container_logs": show_container_logs,
+        "container_name": container_name,
+        "all_container_names": all_container_names,
     }
 
 
