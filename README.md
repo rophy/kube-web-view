@@ -51,7 +51,7 @@ Open http://localhost:8080/ in your browser to see the UI.
 
 ## Running tests
 
-This requires Python 3.7 and [poetry](https://poetry.eustace.io/) and will run unit tests and end-to-end tests with [Kind](https://github.com/kubernetes-sigs/kind):
+This requires Python 3.8 and [poetry](https://poetry.eustace.io/) and will run unit tests and end-to-end tests with [Kind](https://github.com/kubernetes-sigs/kind):
 
 ```
 make test
@@ -60,7 +60,7 @@ make test
 It is also possible to run static and unit tests in docker env (`make test` is equal to `make poetry lint test.unit docker`)
 
 ```
-docker run -it -v $PWD:/src -w /src python:3.7 /bin/bash -c "pip3 install poetry; make poetry lint test.unit"
+docker run -it -v $PWD:/src -w /src python:3.8 /bin/bash -c "pip3 install poetry; make poetry lint test.unit"
 make docker
 ```
 

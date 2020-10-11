@@ -25,7 +25,12 @@ def generate_name_from_spec(spec: str) -> str:
 
 
 async def join_metrics(
-    wrap_query, _cluster, table, namespace: str, is_all_namespaces: bool, params: dict,
+    wrap_query,
+    _cluster,
+    table,
+    namespace: str,
+    is_all_namespaces: bool,
+    params: dict,
 ):
     if not table.rows:
         # nothing to do

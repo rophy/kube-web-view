@@ -780,8 +780,10 @@ async def get_resource_view(request, session):
         namespaced = bool(namespace)
         for i in range(2):
             try:
-                owner_class = await cluster.resource_registry.get_class_by_api_version_kind(
-                    ref["apiVersion"], ref["kind"], namespaced=namespaced
+                owner_class = (
+                    await cluster.resource_registry.get_class_by_api_version_kind(
+                        ref["apiVersion"], ref["kind"], namespaced=namespaced
+                    )
                 )
                 owners.append(
                     {
@@ -922,7 +924,10 @@ async def get_log_from_container(
 
     logs: List[Tuple[str, str, str, str]] = []
     container_log = await kubernetes.logs(
-        pod, container=container_name, timestamps=True, tail_lines=tail_lines,
+        pod,
+        container=container_name,
+        timestamps=True,
+        tail_lines=tail_lines,
     )
     for line in container_log.split("\n"):
         # note that the filter is case-sensitive!
@@ -1267,8 +1272,10 @@ async def get_search(request, session):
             try:
                 for i, _cluster in enumerate(clusters):
                     try:
-                        clazz = await _cluster.resource_registry.get_class_by_plural_name(
-                            resource_type, True, default=None
+                        clazz = (
+                            await _cluster.resource_registry.get_class_by_plural_name(
+                                resource_type, True, default=None
+                            )
                         )
                         if not clazz:
                             clazz = await _cluster.resource_registry.get_class_by_plural_name(
