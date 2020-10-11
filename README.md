@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.com/hjacobs/kube-web-view.svg?branch=master)](https://travis-ci.com/hjacobs/kube-web-view)
 [![Documentation Status](https://readthedocs.org/projects/kube-web-view/badge/?version=latest)](https://kube-web-view.readthedocs.io/en/latest/?badge=latest)
-![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hjacobs/kube-web-view)
 ![Docker Pulls](https://img.shields.io/docker/pulls/hjacobs/kube-web-view.svg)
 ![License](https://img.shields.io/github/license/hjacobs/kube-web-view)
 ![CalVer](https://img.shields.io/badge/calver-YY.MM.MICRO-22bfda.svg)
