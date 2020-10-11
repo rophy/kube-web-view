@@ -22,8 +22,8 @@ https://github.com/containership/konstellate, web, Clojure
 
     "Visualize Kubernetes Applications"
 
-Kubernetator
-============
+Kubernator
+==========
 
 https://github.com/smpio/kubernator, web, node.js
 
