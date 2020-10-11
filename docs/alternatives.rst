@@ -39,7 +39,7 @@ https://github.com/kubernetes/dashboard, web
 Kubernetes Operational View
 ===========================
 
-https://github.com/hjacobs/kube-ops-view, web
+https://codeberg.org/hjacobs/kube-ops-view, web
 
     "Read-only system dashboard for multiple K8s clusters"
 
@@ -48,7 +48,7 @@ Uses WebGL to render nodes and pods.
 Kubernetes Resource Report
 ==========================
 
-https://github.com/hjacobs/kube-resource-report/, web
+https://codeberg.org/hjacobs/kube-resource-report/, web
 
     "Report Kubernetes cluster and pod resource requests vs usage and generate static HTML"
 
