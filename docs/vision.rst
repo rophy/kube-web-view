@@ -33,5 +33,5 @@ Out-of-scope (non-goals) for Kubernetes Web View are:
 * application management (e.g. managing deployments, Helm Charts, etc)
 * write operations (this should be done via safe CI/CD tooling and/or GitOps)
 * fancy UI (JavaScript, theming, etc)
-* visualization (check out `kube-ops-view <https://github.com/hjacobs/kube-ops-view>`_)
-* cost analysis (check out `kube-resource-report <https://github.com/hjacobs/kube-resource-report/>`_)
+* visualization (check out `kube-ops-view <https://codeberg.org/hjacobs/kube-ops-view>`_)
+* cost analysis (check out `kube-resource-report <https://codeberg.org/hjacobs/kube-resource-report/>`_)

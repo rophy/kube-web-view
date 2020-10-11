@@ -99,7 +99,7 @@ Example command line argument to add links to a monitoring dashboard per pod:
 
     --object-links=pods=https://mymonitoringsystem/pod-dashboard?cluster={cluster};namespace={namespace};name={name}
 
-Example command line argument to link resources with an "application" label to `Kubernetes Resource Report <https://github.com/hjacobs/kube-resource-report/>`_:
+Example command line argument to link resources with an "application" label to `Kubernetes Resource Report <https://codeberg.org/hjacobs/kube-resource-report/>`_:
 
 .. code-block:: bash
 
