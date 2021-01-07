@@ -31,7 +31,7 @@ pytest-cov = "^2.7"
 Sphinx = "^2.1"
 sphinx-rtd-theme = "^0.4.3"
 requests-html = "^0.10.0"
-pytest-kind = ">=19.9.1"
+pytest-kind = ">=21.1.1"
 mypy = "^0.760"
 pre-commit = "^1.21.0"
 [build-system]
