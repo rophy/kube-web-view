@@ -1376,7 +1376,10 @@ async def auth(request, handler):
                 raise web.HTTPForbidden(text="Access Denied")
         session["access_token"] = access_token
         session["expires"] = expires
-        raise web.HTTPFound(location=original_url)
+        # we MUST use `return` here instead of raising an exception
+        # this is a workaround for https://github.com/aio-libs/aiohttp-session/issues/396
+        # (aiohttp 3.7.3 and aiohttp-session 2.9.0)
+        return web.HTTPFound(location=original_url)
     elif path != HEALTH_PATH:
         session = await get_session(request)
         # already expire session 5 minutes before actual expiry date
