@@ -884,6 +884,7 @@ async def get_resource_view(request, session):
                 )
 
     context = {
+        "config": config,
         "cluster": cluster.name,
         "namespace": namespace,
         "plural": plural,

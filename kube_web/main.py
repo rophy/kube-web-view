@@ -166,6 +166,11 @@ def parse_args(argv=None):
         help="Comma-separated list of URL templates per label to link to external tools, e.g. 'application=https://myui/apps/{application}'",
     )
     parser.add_argument(
+        "--timestamp-links",
+        type=links_dict,
+        help="Comma-separated list of URL templates per resource type to link to external tools with ISO-8601 tiemstamp, e.g.  'pods=https://mymonitoringtool/{cluster}/{namespace}/{name}/{timestamp}'",
+    )
+    parser.add_argument(
         "--sidebar-resource-types",
         type=key_value_list_pairs,
         help="Comma-separated list of resource types per category, e.g. 'Controllers=deployments,cronjobs;Pod Management=ingresses,pods'",
