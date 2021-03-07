@@ -1,5 +1,5 @@
 <div>
-{{ resource.obj|yaml|highlight(linenos=True)|safe }}
+{{ resource.obj|yaml|highlight(config=config, cluster=cluster, namespace=namespace, resource=resource, linenos=True)|safe }}
 </div>
 <script>
     function highlight() {

@@ -1,10 +1,15 @@
 import colorsys
 import datetime
+import logging
+import re
 
 import pygments
 import yaml as pyyaml
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
+
+
+logger = logging.getLogger(__name__)
 
 
 def pluralize(singular):
@@ -22,7 +27,14 @@ def yaml(value):
     return pyyaml.dump(value, default_flow_style=False)
 
 
-def highlight(value, linenos=False):
+iso8601_re = re.compile(
+    # example:
+    # 2021-02-09T21:28:00Z
+    r"""(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)""",
+)
+
+
+def highlight(value, config, cluster="", namespace="", resource=None, linenos=False):
 
     if linenos:
         formatter = HtmlFormatter(
@@ -34,7 +46,33 @@ def highlight(value, linenos=False):
     else:
         formatter = HtmlFormatter()
 
-    return pygments.highlight(value, get_lexer_by_name("yaml"), formatter)
+    html = pygments.highlight(value, get_lexer_by_name("yaml"), formatter)
+    links = config.timestamp_links.get(resource.endpoint, [])
+    if len(links) == 0:
+        # No links configured, return directly.
+        return html
+
+    if len(links) > 1:
+        logger.warning(
+            f"More than one links configured in timestamp-links for {resource.endpoint}: {links}, only the first one will be used.",
+        )
+
+    link = links[0]
+    repl = r"""<a href="{url}" title="{title}">\1</a>""".format(
+        url=link["href"].format(
+            cluster=cluster,
+            namespace=namespace,
+            name=resource.name,
+            timestamp=r"\1",
+        ),
+        title=link["title"].format(
+            cluster=cluster,
+            namespace=namespace,
+            name=resource.name,
+            timestamp=r"\1",
+        ),
+    )
+    return iso8601_re.sub(repl, html)
 
 
 def age_color(date_time, days=7, hue=0.39, value=0.21):
