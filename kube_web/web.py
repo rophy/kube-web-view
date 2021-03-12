@@ -1401,7 +1401,7 @@ async def auth(request, handler):
             )
             scope = os.getenv("OAUTH2_SCOPE")
             if scope:
-                params["scope"]
+                params["scope"] = scope
             raise web.HTTPFound(location=client.get_authorize_url(**params))
     response = await handler(request)
     return response
