@@ -47,7 +47,7 @@ def highlight(value, config, cluster="", namespace="", resource=None, linenos=Fa
         formatter = HtmlFormatter()
 
     html = pygments.highlight(value, get_lexer_by_name("yaml"), formatter)
-    links = config.timestamp_links.get(resource.endpoint, [])
+    links = (config.timestamp_links or {}).get(resource.endpoint, [])
     if len(links) == 0:
         # No links configured, return directly.
         return html

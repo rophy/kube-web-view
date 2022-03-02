@@ -41,6 +41,12 @@ def cluster(kind_cluster) -> Generator[dict, None, None]:
 
     with kind_cluster.port_forward("service/kube-web-view", 80) as port:
         url = f"http://localhost:{port}/"
+
+        # trial request
+        s = HTMLSession()
+        r = s.get(url)
+        print(r.text)
+
         yield {"url": url}
 
 
