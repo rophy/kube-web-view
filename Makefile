@@ -27,7 +27,7 @@ test.unit:
 	poetry run coverage report
 
 .PHONY: test.e2e
-test.e2e: docker
+test.e2e: docker.local
 	env TEST_IMAGE=$(IMAGE):$(TAG) \
 		poetry run pytest -v -r=a \
 			--log-cli-level info \
@@ -35,6 +35,12 @@ test.e2e: docker
 			--cluster-name kube-web-view-e2e \
 			tests/e2e
 
+.PHONY: docker.local
+docker.local:
+	docker build --build-arg "VERSION=$(VERSION)" -t "$(IMAGE):$(TAG)" .
+	@echo 'Docker image $(IMAGE):$(TAG) can now be used.'
+
+.PHONY: docker
 docker:
 	docker buildx create --use
 	docker buildx build --rm --build-arg "VERSION=$(VERSION)" -t "$(IMAGE):$(TAG)" -t "$(IMAGE):latest" --platform linux/amd64,linux/arm64 .
