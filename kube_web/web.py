@@ -673,6 +673,14 @@ async def get_resource_list(request, session):
             "jobs",
             "cronjobs",
         ]
+    elif plural == ALL and namespace:
+        resource_types_from_all_clusters = set()
+        for _cluster in clusters:
+            for (
+                resource_type
+            ) in await _cluster.resource_registry.namespaced_resource_types:
+                resource_types_from_all_clusters.add(resource_type.endpoint)
+        resource_types = list(sorted(resource_types_from_all_clusters))
     else:
         resource_types = plural.split(",")
 
@@ -699,8 +707,8 @@ async def get_resource_list(request, session):
     errors_by_cluster = collections.defaultdict(list)
     for _clazz, table, error in await asyncio.gather(*tasks):
         if error:
-            if len(clusters) == 1:
-                # directly re-raise the exception as single cluster was given
+            if len(clusters) == 1 and len(resource_types) == 1:
+                # directly re-raise the exception as single cluster and single resource type was given
                 raise error["exception"]
             errors_by_cluster[error["cluster"].name].append(error)
         else:

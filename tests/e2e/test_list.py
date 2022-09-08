@@ -237,6 +237,20 @@ def test_list_multiple_namespaced_resources(session):
     assert "ClusterIP" in response.text
 
 
+def test_list_all_namespaced_resources(session):
+    response = session.get("/clusters/local/namespaces/default/_all")
+    response.raise_for_status()
+    check_links(response, session)
+    assert "application=kube-web-view" in response.text
+    assert "kube-web-view-container" in response.text
+    assert "ClusterIP" in response.text
+    # CronJobs are listed
+    assert 'No CronJob objects in namespace "default" found.' in response.text
+    # ServiceAccounts are listed, too
+    assert "ServiceAccounts" in response.text
+    assert "kube-web-view-account" in response.text
+
+
 def test_download_nodes_tsv(session):
     response = session.get("/clusters/local/nodes?download=tsv")
     response.raise_for_status()

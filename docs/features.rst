@@ -23,7 +23,7 @@ Kubernetes Web View can list all Kubernetes resource types:
 * namespaced resources under ``/clusters/{cluster}/namespaces/{namespace}/{plural}``
 
 Multiple resource types can be listed on the same page by using their comma-separated plural resource names, e.g. to list deployments and ingresses on the same page: ``/clusters/{cluster}/namespaces/{namespace}/deployments,ingresses``.
-Try out the `live demo with deployments and ingresses on the same page <https://kube-web-view.demo.j-serv.de/clusters/local/namespaces/default/deployments,ingresses>`_.
+Use ``_all`` to list all different resource types in a given namespace.
 
 To list resources across all namespaces, use ``_all`` for the namespace name in the URL.
 
