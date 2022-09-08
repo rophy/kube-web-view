@@ -37,11 +37,11 @@ def test_no_results_found(session):
 
 
 def test_search_non_standard_resource_type(session):
-    response = session.get("/search?q=whatever&type=podsecuritypolicies")
+    response = session.get("/search?q=whatever&type=storageclasses")
     response.raise_for_status()
     # check that the type was added as checkbox
     labels = response.html.find("label.checkbox")
-    assert "PodSecurityPolicy" in [label.text for label in labels]
+    assert "StorageClass" in [label.text for label in labels]
 
 
 def test_search_container_image_match_highlight(session):

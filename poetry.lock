@@ -587,7 +587,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 
 [[package]]
 name = "pytest-kind"
-version = "22.8.0"
+version = "22.9.0"
 description = "Kubernetes test support with KIND for pytest"
 category = "dev"
 optional = false
