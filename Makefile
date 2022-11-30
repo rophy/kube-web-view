@@ -23,7 +23,7 @@ lint:
 
 .PHONY: test.unit
 test.unit:
-	poetry run coverage run --source=kube_web -m py.test tests/unit
+	poetry run coverage run --source=kube_web -m pytest tests/unit
 	poetry run coverage report
 
 .PHONY: test.e2e

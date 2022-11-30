@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from typing import List
+from typing import Optional
 from typing import Type
 
 from pykube.objects import APIObject
@@ -166,7 +167,7 @@ class ResourceRegistry:
         plural: str,
         namespaced: bool,
         default=throw_exception,
-        api_version: str = None,
+        api_version: Optional[str] = None,
     ):
         _types = (
             self.namespaced_resource_types

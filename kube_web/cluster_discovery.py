@@ -2,6 +2,7 @@ import logging
 import time
 from pathlib import Path
 from typing import List
+from typing import Optional
 from urllib.parse import urljoin
 
 import requests
@@ -32,7 +33,11 @@ class OAuth2BearerTokenAuth(AuthBase):
 
 class Cluster:
     def __init__(
-        self, name: str, api: HTTPClient, labels: dict = None, spec: dict = None
+        self,
+        name: str,
+        api: HTTPClient,
+        labels: Optional[dict] = None,
+        spec: Optional[dict] = None,
     ):
         self.name = name
         self.api = api
