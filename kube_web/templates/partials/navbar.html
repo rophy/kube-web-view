@@ -10,14 +10,17 @@
         <div class="navbar-start">
             <a class="navbar-item {{ 'is-active' if page == 'clusters' }}" href="/clusters">Clusters</a>
             {% if namespaces: %}
-            <div class="navbar-item has-dropdown is-hoverable">
+            <div id="namespace-dropdown" class="navbar-item has-dropdown">
                 <a class="navbar-link">
                     {{ namespace }}
                 </a>
 
                 <div class="navbar-dropdown">
+                    <div class="control">
+                        <input id="namespace-searchbox" type="text" placeholder="type to filter" class="input is-transparent">
+                    </div>
                     {% for ns in namespaces: %}
-                    <a class="navbar-item" href="/clusters/{{ cluster}}/namespaces/{{ ns.name }}">
+                    <a class="navbar-item namespace-item" href="/clusters/{{ cluster}}/namespaces/{{ ns.name }}">
                         {{ ns.name }}
                     </a>
                     {% endfor %}
@@ -41,7 +44,7 @@
                     </div>
                 </form>
             </div>
-            <a class="navbar-item {{ "is-active" if reload }}" href="{{ rel_url.update_query(reload=0 if reload else 2) }}" id="btn-reload">
+            <a class="navbar-item {{ "is-active" if reload }}" title="Toggle auto-reload page every 30 secs" href="{{ rel_url.update_query(reload=0 if reload else 30) }}" id="btn-reload">
                 <span class="icon">
                     {% if reload: %}
                     <span class="fa-stack">
