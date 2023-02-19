@@ -81,7 +81,6 @@ def links_dict(value):
 
 
 def parse_args(argv=None):
-
     parser = argparse.ArgumentParser(description=f"Kubernetes Web View v{__version__}")
     parser.add_argument(
         "--port",

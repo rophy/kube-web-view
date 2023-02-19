@@ -35,7 +35,6 @@ iso8601_re = re.compile(
 
 
 def highlight(value, config, cluster="", namespace="", resource=None, linenos=False):
-
     if linenos:
         formatter = HtmlFormatter(
             lineanchors="line",

@@ -35,7 +35,6 @@ thread_pool = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="pykube")
 
 # https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/resource-metrics-api.md
 class NodeMetrics(APIObject):
-
     version = "metrics.k8s.io/v1beta1"
     endpoint = "nodes"
     kind = "NodeMetrics"
@@ -43,7 +42,6 @@ class NodeMetrics(APIObject):
 
 # https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/resource-metrics-api.md
 class PodMetrics(NamespacedAPIObject):
-
     version = "metrics.k8s.io/v1beta1"
     endpoint = "pods"
     kind = "PodMetrics"

@@ -11,7 +11,7 @@ COPY pyproject.toml /
 RUN mkdir /kube_web && touch /kube_web/__init__.py && touch /README.md
 
 RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-dev --no-ansi
+    poetry install --no-interaction --only main --no-ansi
 
 FROM python:3.10-slim
 

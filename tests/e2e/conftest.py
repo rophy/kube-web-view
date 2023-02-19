@@ -57,7 +57,6 @@ def populated_cluster(cluster):
 
 @fixture(scope="session")
 def session(populated_cluster):
-
     url = populated_cluster["url"].rstrip("/")
 
     s = HTMLSession()
