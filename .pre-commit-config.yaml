@@ -20,7 +20,7 @@ repos:
       - id: reorder-python-imports
 
   - repo: https://github.com/ambv/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
 
@@ -33,7 +33,7 @@ repos:
   # linters
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.4
+    rev: 1.7.5
     hooks:
       - id: bandit
         args: ["-x", "tests"]
@@ -66,13 +66,13 @@ repos:
         stages: [push]
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.29.0
+    rev: v1.30.0
     hooks:
       - id: yamllint
         args: ["--strict", "-d", "{rules: {line-length: {max: 180}}}"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
+    rev: v1.2.0
     hooks:
       - id: mypy
         exclude: "^examples/oauth2-log-jwt-sub/hooks.py|docs/conf.py|tests/e2e/$"
@@ -119,6 +119,6 @@ repos:
   # http://jorisroovers.com/gitlint/#using-gitlint-through-pre-commit
 
   - repo: https://github.com/jorisroovers/gitlint
-    rev:  v0.19.0dev
+    rev:  v0.19.1
     hooks:
       - id: gitlint

@@ -239,7 +239,7 @@ def parse_args(argv=None):
         "--external-clusters",
         type=key_value_pairs,
         help="Semicolon-separated list of external kube-web-view instances, e.g. 'kube-web-view-us=https://kube-web-view.mycompany.com/us;kube-web-view-eu=https://kube-web-view.mycompany.com/eu'",
-        default={}
+        default={},
     )
     args = parser.parse_args(argv)
     return args
