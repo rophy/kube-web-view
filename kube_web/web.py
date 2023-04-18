@@ -35,6 +35,7 @@ from pykube.objects import Pod
 from pykube.query import Query
 from yarl import URL
 
+from .cluster_discovery import Cluster
 from .cluster_manager import ClusterNotFound
 from .resource_registry import ResourceTypeNotFound
 from .selector import parse_selector
@@ -401,6 +402,8 @@ async def get_cluster_list(request, session):
             _filter_lower, cluster
         ):
             clusters.append(cluster)
+    for name, url in request.app[CONFIG].external_clusters.items():
+        clusters.append(Cluster(name, None, None, None, url))
     clusters.sort(key=lambda c: c.name)
     return {"clusters": clusters}
 

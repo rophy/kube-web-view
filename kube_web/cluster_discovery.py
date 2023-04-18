@@ -38,11 +38,13 @@ class Cluster:
         api: HTTPClient,
         labels: Optional[dict] = None,
         spec: Optional[dict] = None,
+        external_url: Optional[str] = ''
     ):
         self.name = name
         self.api = api
         self.labels = labels or {}
         self.spec = spec or {}
+        self.external_url = external_url
 
 
 class StaticClusterDiscoverer:

@@ -88,6 +88,8 @@ You can use ``--cluster-auth-token-path`` to dynamically refresh the Bearer acce
 This is useful if you need to rotate the token regularly (e.g. every hour). Either run a sidecar process with a shared volume (e.g. "emptyDir") to write/refresh the token
 or mount a Kubernetes secret into kube-web-view's container at the given path.
 
+Finally, you can specify a list of external kube-web-view instances via the ``--external-clusters`` CLI option, e.g. ``--external-clusters=kube-web-view-us=https://kube-web-view.mycompany.com/us;kube-web-view-eu=https://kube-web-view.mycompany.com/eu``
+The list will be displayed in clusters page as static links.
 
 .. _access-control:
 

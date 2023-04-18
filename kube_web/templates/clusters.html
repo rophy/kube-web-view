@@ -43,6 +43,7 @@
         </tr>
         {% for cluster in clusters: %}
         <tr>
+            {% if not cluster.external_url: %}
             <td><input type="checkbox" name="cluster" value="{{ cluster.name }}" onclick="toggleSearchButton()"></td>
             <td><a href="/clusters/{{ cluster.name }}">{{ cluster.name }}</a></td>
             <td>{{ cluster.api.url }}</td>
@@ -51,6 +52,17 @@
                 <a href="/clusters?selector={{ key }}={{ val }}"><span class="tag is-link">{{ key }}: {{ val }}</span></a>
                 {% endfor %}
             </td>
+            {% else: %}
+            <td> </td>
+            <td>
+                <a href="{{ cluster.external_url }}">
+                    <span class="icon"><i class="fas fa-external-link-alt"></i></span>
+                    {{ cluster.name }}
+                </a>
+            </td>
+            <td>{{ cluster.external_url }}</td>
+            <td> </td>
+            {% endif %}
         </tr>
         {% else: %}
         <tr>
