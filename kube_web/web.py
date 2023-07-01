@@ -3,6 +3,7 @@ import base64
 import collections
 import colorsys
 import csv
+import json
 import logging
 import os
 import time
@@ -1368,9 +1369,8 @@ async def auth(request, handler):
         # Get access token
         code = request.query["code"]
         try:
-            original_url = base64.urlsafe_b64decode(request.query["state"]).decode(
-                "utf-8"
-            )
+            state = json.loads(base64.urlsafe_b64decode(request.query["state"]).decode("utf-8"))
+            original_url = state["original_url"]
         except Exception:
             original_url = "/"
         redirect_uri = str(request.url.with_path(OAUTH2_CALLBACK_PATH))
@@ -1407,8 +1407,10 @@ async def auth(request, handler):
             params["redirect_uri"] = redirect_uri
             # NOTE: we use urlsafe Base64 because some OAuth providers choke on certain characters
             # see https://codeberg.org/hjacobs/kube-web-view/issues/74
+            # The url is put into a JSON object since some OAuth providers return an error if the
+            # state query param is not long enough (not enough entropy).
             params["state"] = base64.urlsafe_b64encode(
-                str(request.rel_url).encode("utf-8")
+                json.dumps({"original_url": str(request.rel_url)}).encode("utf-8")
             )
             scope = os.getenv("OAUTH2_SCOPE")
             if scope:
