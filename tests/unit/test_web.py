@@ -1,17 +1,19 @@
 import argparse
 import asyncio
 import os
-import pytest
 import re
-from unittest.mock import patch
 import urllib
+from unittest.mock import patch
 
-import aioauth_client
+import pytest
 from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 from aiohttp_session import SESSION_KEY
 
-from kube_web.web import CONFIG, OAUTH2_CALLBACK_PATH, auth, is_allowed_namespace
+from kube_web.web import auth
+from kube_web.web import CONFIG
+from kube_web.web import is_allowed_namespace
+from kube_web.web import OAUTH2_CALLBACK_PATH
 
 
 def setup_oauth_test(method, url):
@@ -19,6 +21,7 @@ def setup_oauth_test(method, url):
         assert False
 
     session = {}
+
     def request_get(key):
         if key == SESSION_KEY:
             return session
@@ -28,7 +31,9 @@ def setup_oauth_test(method, url):
     os.environ["OAUTH2_ACCESS_TOKEN_URL"] = "https://example.com/token"
 
     request = make_mocked_request(method, url)
-    request = request.clone(rel_url=url, host="kube-web-view.readthedocs.io", scheme="https")
+    request = request.clone(
+        rel_url=url, host="kube-web-view.readthedocs.io", scheme="https"
+    )
     request.app[CONFIG] = argparse.Namespace(oauth2_authorized_hook=None)
     request.get = request_get
 
@@ -46,7 +51,10 @@ def test_oauth_login():
 
     assert url.hostname == "example.com"
     assert url.path == "/auth"
-    assert query["redirect_uri"][0] == "https://kube-web-view.readthedocs.io/oauth2/callback"
+    assert (
+        query["redirect_uri"][0]
+        == "https://kube-web-view.readthedocs.io/oauth2/callback"
+    )
     assert query["state"][0] == "eyJvcmlnaW5hbF91cmwiOiAiLyJ9"
     assert len(query["state"][0]) > 8
     assert query["response_type"][0] == "code"

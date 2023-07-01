@@ -1369,7 +1369,9 @@ async def auth(request, handler):
         # Get access token
         code = request.query["code"]
         try:
-            state = json.loads(base64.urlsafe_b64decode(request.query["state"]).decode("utf-8"))
+            state = json.loads(
+                base64.urlsafe_b64decode(request.query["state"]).decode("utf-8")
+            )
             original_url = state["original_url"]
         except Exception:
             original_url = "/"
