@@ -86,6 +86,7 @@ Kubernetes Web View supports rendering pod container logs for individual pods an
 Just use the "Logs" tab or append ``/logs`` to the resource URL.
 
 Note that container logs are disabled by default for security reasons, enable them via ``--show-container-logs``.
+Access logs are enabled by default, disable them via ``--no-access-logs``.
 
 Custom Resource Definitions (CRDs)
 ==================================
