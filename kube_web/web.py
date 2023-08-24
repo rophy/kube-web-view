@@ -1380,7 +1380,15 @@ async def auth(request, handler):
             code, redirect_uri=redirect_uri
         )
         expires_in = data.get("expires_in", ONE_WEEK)
-        expires = time.time() + expires_in
+        if expires_in > FIVE_MINUTES * 2:
+            # already expire session 5 minutes before actual expiry date
+            # to make sure the access token is still valid during the request
+            expires = time.time() + expires_in - FIVE_MINUTES
+        else:
+            logger.warning(
+                f"auth token has a very short expiration time of {expires_in} seconds."
+            )
+            expires = time.time() + expires_in
         session = await get_session(request)
         hook = request.app[CONFIG].oauth2_authorized_hook
         if hook:
@@ -1396,12 +1404,7 @@ async def auth(request, handler):
         return web.HTTPFound(location=original_url)
     elif path != HEALTH_PATH:
         session = await get_session(request)
-        # already expire session 5 minutes before actual expiry date
-        # to make sure the access token is still valid during the request
-        if (
-            not session.get("access_token")
-            or session.get("expires", 0) < time.time() + FIVE_MINUTES
-        ):
+        if not session.get("access_token") or session.get("expires", 0) < time.time():
             client, params = await get_oauth2_client()
             # note that Google OAuth provider requires the redirect_uri here
             # (it's optional according to https://tools.ietf.org/html/rfc6749#section-4.1.1)
