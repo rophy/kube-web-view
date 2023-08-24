@@ -16,7 +16,7 @@
 project = "Kubernetes Web View"
 copyright = "2019, Henning Jacobs"
 author = "Henning Jacobs"
-version = "23.7.0"
+version = "23.8.0"
 
 
 # -- General configuration ---------------------------------------------------
