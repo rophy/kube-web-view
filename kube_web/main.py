@@ -224,6 +224,11 @@ def parse_args(argv=None):
         help="Optional hook (name of a coroutine like 'mymodule.myfunc') to process/enrich template context for the resource detail view",
     )
     parser.add_argument(
+        "--logs-authorized-hook",
+        type=coroutine_function,
+        help="Optional hook (name of a coroutine like 'mymodule.myfunc') to authorize access to container logs",
+    )
+    parser.add_argument(
         "--preferred-api-versions",
         type=key_value_pairs,
         help="Preferred Kubernetes apiVersion per resource type, e.g. 'horizontalpodautoscalers=autoscaling/v2beta2;deployments=apps/v1'",
