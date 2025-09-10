@@ -60,7 +60,7 @@ docs:
 
 .PHONY: run
 run:
-	poetry run python3 -m kube_web --show-container-logs --debug "--object-links=ingresses=javascript:alert('{name}')" "--label-links=application=javascript:alert('Application label has value {label_value}')|eye|This is a link!" --preferred-api-versions=deployments=apps/v1
+	SESSION_SECRET_KEY="yigSquVLaDLZ6LcFcZ6xtQjYofAJZc4rXsnWeE5MN6M=" OAUTH2_CLIENT_SECRET="ZXhhbXBsZS1hcHAtc2VjcmV0" OAUTH2_CLIENT_ID="example-app" OAUTH2_ACCESS_TOKEN_URL="http://7f000001.nip.io:5556/dex/token" OAUTH2_AUTHORIZE_URL="http://7f000001.nip.io:5556/dex/auth" OAUTh2_SCOPE="email openid profile" poetry run python3 -m kube_web --show-container-logs --debug "--object-links=ingresses=javascript:alert('{name}')" "--label-links=application=javascript:alert('Application label has value {label_value}')|eye|This is a link!" --preferred-api-versions=deployments=apps/v1 --oauth2-authorized-hook=hooks.oauth2_authorized --logs-authorized-hook=hooks.logs_authorized
 
 .PHONY: run.kind
 run.kind:
