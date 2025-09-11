@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "kube-web-view"
-version = "23.8.0"
+version = "24.0.0"
 description = "Kubernetes Web View allows to list and view all Kubernetes resources (incl. CRDs) with permalink-friendly URLs in a plain-HTML frontend"
-authors = ["Henning Jacobs <henning@zalando.de>"]
+authors = ["Henning Jacobs <henning@zalando.de>", "Rophy Tsai <rophy@users.noreply.github.com>"]
 license = "GPL-3.0+"
 readme = "README.md"
 homepage = "https://kube-web-view.readthedocs.io/"
 documentation = "https://kube-web-view.readthedocs.io/"
-repository = "https://codeberg.org/hjacobs/kube-web-view"
+repository = "https://github.com/rophy/kube-web-view"
 packages = [
     { include = "kube_web" }
 ]
@@ -16,7 +16,7 @@ packages = [
 kube-web-view = 'kube_web:main.main'
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.12"
 pykube-ng = ">=19.9.2"
 Jinja2 = "^3.0"
 aiohttp-jinja2 = "^1.1"
