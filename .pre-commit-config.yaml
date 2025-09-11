@@ -7,11 +7,12 @@ repos:
       - id: check-hooks-apply
       - id: check-useless-excludes
 
-  - repo: https://codeberg.org/hjacobs/kube-manifest-lint
-    rev: 0.2.0
-    hooks:
-      - id: kube-manifest-lint
-        exclude: kustomization.yaml
+  # Temporarily disabled due to PyYAML compatibility issues with Python 3.12
+  # - repo: https://codeberg.org/hjacobs/kube-manifest-lint
+  #   rev: 0.2.0
+  #   hooks:
+  #     - id: kube-manifest-lint
+  #       exclude: kustomization.yaml
 
   # formatters
   - repo: https://github.com/asottile/reorder_python_imports
@@ -75,7 +76,7 @@ repos:
     rev: v1.4.1
     hooks:
       - id: mypy
-        exclude: "^examples/oauth2-log-jwt-sub/hooks.py|docs/conf.py|tests/e2e/$"
+        exclude: "^examples/oauth2-log-jwt-sub/hooks.py|examples/oauth2-validate-github-token/|examples/oauth2-logs-authorization/|docs/conf.py|tests/e2e/$"
         additional_dependencies: ["types-requests", "types-PyYAML"]
 
   - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks

@@ -25,7 +25,7 @@ aiohttp_session = {version = "^2.7", extras = ["secure"]}
 aioauth-client = "^0.17.3"
 aiohttp_remotes = "^0.1.2"
 jmespath = "^0.9.4"
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
 pytest-cov = "^3.0"
 Sphinx = "^2.1"

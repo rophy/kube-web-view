@@ -9,7 +9,7 @@ async def resource_view_prerender(cluster, namespace, resource, context):
     """
     if resource.kind == "Deployment":
         link = {
-            "href": f"#this-is-a-custom-link;name={resource.name}",
+            "href": f"#this-is-a-custom-link; name={resource.name}",  # noqa: E702
             "class": "is-link",
             "title": "Some example link to nowhere",
             "icon": "external-link-alt",

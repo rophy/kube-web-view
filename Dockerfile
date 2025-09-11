@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.12
 
 WORKDIR /
 
@@ -13,12 +13,12 @@ RUN mkdir /kube_web && touch /kube_web/__init__.py && touch /README.md
 RUN poetry config virtualenvs.create false && \
     poetry install --no-interaction --only main --no-ansi
 
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 WORKDIR /
 
 # copy pre-built packages to this image
-COPY --from=0 /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --from=0 /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # now copy the actual code we will execute (poetry install above was just for dependencies)
 COPY kube_web /kube_web

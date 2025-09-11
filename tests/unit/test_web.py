@@ -72,7 +72,7 @@ def test_oauth_callback(get_access_token):
 
     response = asyncio.run(auth(callback_request, handler))
 
-    redirect_uri = f"https://kube-web-view.readthedocs.io{OAUTH2_CALLBACK_PATH}"
+    redirect_uri = "https://kube-web-view.readthedocs.io{}".format(OAUTH2_CALLBACK_PATH)
 
     get_access_token.assert_called_with(code, redirect_uri=redirect_uri)
     assert type(response) == web.HTTPFound
