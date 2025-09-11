@@ -1,6 +1,6 @@
 .PHONY: clean test appjs docker push mock
 
-IMAGE            ?= hjacobs/kube-web-view
+IMAGE            ?= rophy/kube-web-view
 GITDIFFHASH       = $(shell git diff | md5sum | cut -c 1-4)
 VERSION          ?= $(shell git describe --tags --always --dirty=-dirty-$(GITDIFFHASH))
 VERSIONPY         = $(shell echo $(VERSION) | cut -d- -f 1)
