@@ -40,7 +40,7 @@ def cluster(kind_cluster) -> Generator[dict, None, None]:
     kubectl("rollout", "status", "deployment/kube-web-view")
 
     with kind_cluster.port_forward("service/kube-web-view", 80) as port:
-        url = f"http://localhost:{port}/"
+        url = "http://localhost:{}/".format(port)
 
         # trial request
         s = HTMLSession()

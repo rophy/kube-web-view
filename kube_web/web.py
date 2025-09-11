@@ -611,7 +611,9 @@ async def download_tsv(request, table):
     response.content_type = "text/tab-separated-values; charset=utf-8"
     path = request.rel_url.path
     filename = path.strip("/").replace("/", "_")
-    response.headers["Content-Disposition"] = f'attachment; filename="{filename}.tsv"'
+    response.headers[
+        "Content-Disposition"
+    ] = f'attachment; filename="{filename}.tsv"'  # noqa: E702
     await response.prepare(request)
     await as_tsv(table, ResponseWriter(response))
     return response
@@ -622,7 +624,9 @@ async def download_yaml(request, resource):
     response.content_type = "text/vnd.yaml; charset=utf-8"
     path = request.rel_url.path
     filename = path.strip("/").replace("/", "_")
-    response.headers["Content-Disposition"] = f'attachment; filename="{filename}.yaml"'
+    response.headers[
+        "Content-Disposition"
+    ] = f'attachment; filename="{filename}.yaml"'  # noqa: E702
     await response.prepare(request)
     data = yaml.dump(resource.obj, default_flow_style=False)
     await response.write(data.encode("utf-8"))

@@ -92,9 +92,7 @@ def age_color(date_time, days=7, hue=0.39, value=0.21):
     s = max(0, 1.0 - d / (days * 24.0 * 3600))
     # dates older than days are color #363636 (rgb(54, 54, 54))
     r, g, b = colorsys.hsv_to_rgb(hue, s, value + (s * (0.81 - value)))
-    return (
-        f"#{int(round(r * 255)):02x}{int(round(g * 255)):02x}{int(round(b * 255)):02x}"
-    )
+    return f"#{int(round(r * 255)):02x}{int(round(g * 255)):02x}{int(round(b * 255)):02x}"  # noqa: E231
 
 
 def cpu(value):
