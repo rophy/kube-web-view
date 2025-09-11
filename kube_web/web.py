@@ -986,7 +986,7 @@ async def get_resource_logs(request, session):
 
     # Check authorization via logs_authorized_hook
     config = request.app[CONFIG]
-    logs_authorized_hook = getattr(config, 'logs_authorized_hook', None)
+    logs_authorized_hook = getattr(config, "logs_authorized_hook", None)
     logs_unauthorized = False
     if logs_authorized_hook:
         if not await logs_authorized_hook(cluster, namespace, resource, session):

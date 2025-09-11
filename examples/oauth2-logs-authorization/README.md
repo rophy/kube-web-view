@@ -88,7 +88,7 @@ async def oauth2_authorized(data: dict, session):
             user_info = await resp.json()
             session["user_email"] = user_info["email"]
             session["user_name"] = user_info["login"]
-        
+
         # Get user's teams/orgs
         async with http_session.get(
             "https://api.github.com/user/teams",
@@ -96,7 +96,7 @@ async def oauth2_authorized(data: dict, session):
         ) as resp:
             teams = await resp.json()
             session["groups"] = [team["slug"] for team in teams]
-    
+
     return True
 ```
 
@@ -117,7 +117,7 @@ async def oauth2_authorized(data: dict, session):
             session["user_name"] = user_info["name"]
             # Google groups would need additional API calls
             session["groups"] = []
-    
+
     return True
 ```
 

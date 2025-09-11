@@ -28,5 +28,6 @@ async def oauth2_authorized(data: dict, session):
     # allow login
     return True
 
+
 async def logs_authorized(cluster, namespace: str, resource, session) -> bool:
     return True
