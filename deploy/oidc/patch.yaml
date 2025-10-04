@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-web-view
+spec:
+  template:
+    spec:
+      containers:
+      - name: kube-web-view
+        args:
+          - --port=8080
+          - --oauth2-authorized-hook=hooks.oauth2_authorized
+        env:
+          - name: OAUTH2_CLIENT_ID
+            value: example-app
+          - name: OAUTH2_CLIENT_SECRET
+            value: ZXhhbXBsZS1hcHAtc2VjcmV0
+          - name: OAUTH2_ACCESS_TOKEN_URL
+            value: http://oidc-server:5556/dex/token
+          - name: OAUTH2_AUTHORIZE_URL
+            value: http://localhost:5556/dex/auth
+          - name: OAUTH2_SCOPE
+            value: email openid profile
+          - name: SESSION_SECRET_KEY # cryptography.fernet.Fernet.generate_key()
+            value: yigSquVLaDLZ6LcFcZ6xtQjYofAJZc4rXsnWeE5MN6M=
+        volumeMounts:
+          - name: hooks
+            mountPath: /hooks.py
+            subPath: hooks.py
+            readOnly: true
+      volumes:
+        - name: hooks
+          configMap:
+            name: kube-web-view-hooks
+            items:
+            - key: hooks.py
+              path: hooks.py

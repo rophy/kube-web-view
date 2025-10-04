@@ -42,11 +42,22 @@ Open http://localhost:8080/ in your browser to see the UI.
 This will deploy a single Pod with Kubernetes Web View into your cluster:
 
 ```
-kubectl apply -k deploy/
+kubectl apply -k deploy/base/
 kubectl port-forward service/kube-web-view 8080:80
 ```
 
 Open http://localhost:8080/ in your browser to see the UI.
+
+### Deploying with a local OAuth2 server
+
+```
+kubectl apply -k deploy/oidc/
+kubectl port-forward service/oidc-server 5556:5556
+kubectl port-forward service/kube-web-view 8080:80
+```
+
+Open http://localhost:8080/ in your browser to see the UI.
+Click `Log in with Email` and use this account go log in: `user01@example.localhost` / `password`
 
 
 ## Running tests

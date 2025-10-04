@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-web-view-hooks
+data:
+  hooks.py: |
+    import base64
+    import json
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    async def oauth2_authorized(data: dict, session):
+      token = data["id_token"]
+      header, payload, signature = token.split(".")
+      decoded = base64.b64decode(payload + "=" * ((4 - len(payload) % 4) % 4)).decode(
+        "utf-8"
+      )
+      payload_data = json.loads(decoded)
+      email = payload_data["email"]
+      session["email"] = email
+      logging.info(f"User {email} was logged in")
+      return True

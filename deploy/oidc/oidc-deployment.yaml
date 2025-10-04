@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oidc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oidc-server
+  template:
+    metadata:
+      labels:
+        app: oidc-server
+    spec:
+      containers:
+        - name: dexidp
+          image: dexidp/dex:v2.43.1-alpine
+          ports:
+            - containerPort: 5556
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/dex/config.docker.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: oidc-server
