@@ -156,7 +156,7 @@ def test_list_pods_with_custom_columns(session):
     rows = response.html.find("main table tbody tr")
     for row in rows:
         cells = row.find("td")
-        assert cells[-3].text.startswith("['hjacobs/")
+        assert cells[-3].text.startswith("['rophy/")
 
 
 def test_list_pods_with_custom_column_auto_name(session):
@@ -172,7 +172,7 @@ def test_list_pods_with_custom_column_auto_name(session):
     rows = response.html.find("main table tbody tr")
     for row in rows:
         cells = row.find("td")
-        assert cells[-3].text.startswith("['hjacobs/")
+        assert cells[-3].text.startswith("['rophy/")
 
 
 def test_list_pods_with_multiple_custom_columns(session):
@@ -386,7 +386,7 @@ def test_hide_columns(session):
 def test_filter_pods_with_custom_columns(session):
     """Test that filtering on custom columns works."""
     response = session.get(
-        "/clusters/local/namespaces/default/pods?customcols=Images=spec.containers[*].image&filter=hjacobs/"
+        "/clusters/local/namespaces/default/pods?customcols=Images=spec.containers[*].image&filter=rophy/"
     )
     response.raise_for_status()
     check_links(response, session)
@@ -397,7 +397,7 @@ def test_filter_pods_with_custom_columns(session):
     rows = response.html.find("main table tbody tr")
     for row in rows:
         cells = row.find("td")
-        assert cells[-3].text.startswith("['hjacobs/")
+        assert cells[-3].text.startswith("['rophy/")
 
 
 def test_list_pods_with_joined_nodes(session):

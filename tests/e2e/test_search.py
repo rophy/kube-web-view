@@ -45,11 +45,11 @@ def test_search_non_standard_resource_type(session):
 
 
 def test_search_container_image_match_highlight(session):
-    response = session.get("/search?q=hjacobs/wrong-container-image:&type=deployments")
+    response = session.get("/search?q=rophy/wrong-container-image:&type=deployments")
     response.raise_for_status()
     match = response.html.find(".search-result .match", first=True)
     assert (
-        '<span class="match"><em>hjacobs/wrong-container-image:</em>0.1</span>'
+        '<span class="match"><em>rophy/wrong-container-image:</em>0.1</span>'
         == match.html
     )
 
