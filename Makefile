@@ -10,6 +10,10 @@ OSNAME := $(shell uname | perl -ne 'print lc($$_)')
 
 default: docker
 
+.PHONY: venv
+venv:
+	scripts/setup-venv.sh
+
 .PHONY: poetry
 poetry:
 	poetry install
