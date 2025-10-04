@@ -42,7 +42,7 @@ Open http://localhost:8080/ in your browser to see the UI.
 This will deploy a single Pod with Kubernetes Web View into your cluster:
 
 ```
-kubectl apply -f deploy/
+kubectl apply -k deploy/
 kubectl port-forward service/kube-web-view 8080:80
 ```
 
