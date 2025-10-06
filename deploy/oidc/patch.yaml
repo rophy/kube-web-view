@@ -9,7 +9,9 @@ spec:
       - name: kube-web-view
         args:
           - --port=8080
+          - --show-container-logs
           - --oauth2-authorized-hook=hooks.oauth2_authorized
+          - --logs-authorized-hook=hooks.logs_authorized
         env:
           - name: OAUTH2_CLIENT_ID
             value: example-app

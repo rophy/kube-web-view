@@ -984,6 +984,29 @@ async def get_resource_logs(request, session):
         query = query.filter(namespace=namespace)
     resource = await kubernetes.get_by_name(query, name)
 
+    # Check authorization via logs_authorized_hook
+    config = request.app[CONFIG]
+    logs_authorized_hook = getattr(config, "logs_authorized_hook", None)
+    logs_unauthorized = False
+    if logs_authorized_hook:
+        if not await logs_authorized_hook(cluster, namespace, resource, session):
+            logs_unauthorized = True
+            # Return early with unauthorized flag
+            return {
+                "cluster": cluster.name,
+                "namespace": namespace,
+                "plural": plural,
+                "resource": resource,
+                "tail_lines": tail_lines,
+                "filter_text": filter_text,
+                "pods": [],
+                "logs": [],
+                "show_container_logs": False,
+                "logs_unauthorized": logs_unauthorized,
+                "container_name": ALL_CONTAINER_LOGS,
+                "all_container_names": set([ALL_CONTAINER_LOGS]),
+            }
+
     if resource.kind == "Pod":
         pods = [resource]
     elif resource.obj.get("spec", {}).get("selector", {}).get("matchLabels"):
@@ -1041,6 +1064,7 @@ async def get_resource_logs(request, session):
         "pods": pods,
         "logs": logs,
         "show_container_logs": show_container_logs,
+        "logs_unauthorized": logs_unauthorized,
         "container_name": container_name,
         "all_container_names": all_container_names,
     }
