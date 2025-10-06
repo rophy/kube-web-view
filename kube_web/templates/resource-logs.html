@@ -19,7 +19,18 @@
     </ul>
 </div>
 
-{% if not show_container_logs: %}
+{% if logs_unauthorized: %}
+
+<article class="message is-danger">
+    <div class="message-header">
+        <p>Access Denied</p>
+    </div>
+    <div class="message-body">
+        You are not authorized to view container logs for this resource.
+    </div>
+</article>
+
+{% elif not show_container_logs: %}
 
 <article class="message is-warning">
     <div class="message-header">

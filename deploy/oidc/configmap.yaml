@@ -21,3 +21,10 @@ data:
       session["email"] = email
       logging.info(f"User {email} was logged in")
       return True
+
+
+    async def logs_authorized(cluster, namespace: str, resource, session) -> bool:
+      logger.info(f"logs_authorized: {namespace} {resource} {session}")
+      if namespace == "kube-system":
+        return False
+      return True
