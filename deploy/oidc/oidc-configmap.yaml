@@ -11,6 +11,10 @@ data:
         file: /var/dex/dex.db
     web:
       http: 0.0.0.0:5556
+    expiry:
+      idTokens: "30s"
+      refreshTokens:
+        absoluteLifetime: "5m"
     staticClients:
       - id: example-app
         redirectURIs:
