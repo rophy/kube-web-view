@@ -22,7 +22,7 @@ spec:
           - name: OAUTH2_AUTHORIZE_URL
             value: http://localhost:5556/dex/auth
           - name: OAUTH2_SCOPE
-            value: email openid profile
+            value: email openid profile offline_access
           - name: SESSION_SECRET_KEY # cryptography.fernet.Fernet.generate_key()
             value: yigSquVLaDLZ6LcFcZ6xtQjYofAJZc4rXsnWeE5MN6M=
         volumeMounts:

@@ -1,0 +1,109 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: kube-web-view
+
+build:
+  artifacts:
+    - image: rophy/kube-web-view
+      docker:
+        dockerfile: Dockerfile
+        buildArgs:
+          VERSION: "{{.TAG}}"
+  tagPolicy:
+    gitCommit: {}
+
+deploy:
+  kubectl:
+    defaultNamespace: default
+
+manifests:
+  kustomize:
+    paths:
+      - deploy/base
+
+portForward:
+  - resourceType: service
+    resourceName: kube-web-view
+    port: 80
+    localPort: 8080
+
+profiles:
+  # Profile for OIDC development with OAuth2 server
+  - name: oidc
+    deploy:
+      kubectl:
+        defaultNamespace: default
+    manifests:
+      kustomize:
+        paths:
+          - deploy/oidc
+    portForward:
+      - resourceType: service
+        resourceName: kube-web-view
+        port: 80
+        localPort: 8080
+      - resourceType: service
+        resourceName: oidc-server
+        port: 5556
+        localPort: 5556
+
+  # Profile for development with file sync (faster iteration)
+  - name: dev
+    deploy:
+      kubectl:
+        defaultNamespace: default
+    build:
+      artifacts:
+        - image: rophy/kube-web-view
+          docker:
+            dockerfile: Dockerfile
+            buildArgs:
+              VERSION: "dev"
+          sync:
+            manual:
+              - src: "kube_web/**/*.py"
+                dest: "/kube_web"
+              - src: "kube_web/templates/**/*"
+                dest: "/kube_web/templates"
+    manifests:
+      kustomize:
+        paths:
+          - deploy/base
+    portForward:
+      - resourceType: service
+        resourceName: kube-web-view
+        port: 80
+        localPort: 8080
+
+  # Profile for OIDC development with file sync
+  - name: oidc-dev
+    deploy:
+      kubectl:
+        defaultNamespace: default
+    build:
+      artifacts:
+        - image: rophy/kube-web-view
+          docker:
+            dockerfile: Dockerfile
+            buildArgs:
+              VERSION: "dev"
+          sync:
+            manual:
+              - src: "kube_web/**/*.py"
+                dest: "/kube_web"
+              - src: "kube_web/templates/**/*"
+                dest: "/kube_web/templates"
+    manifests:
+      kustomize:
+        paths:
+          - deploy/oidc
+    portForward:
+      - resourceType: service
+        resourceName: oidc-server
+        port: 5556
+        localPort: 5556
+      - resourceType: service
+        resourceName: kube-web-view
+        port: 80
+        localPort: 8080

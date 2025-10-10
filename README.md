@@ -97,3 +97,17 @@ To start the Python web server locally with the default kubeconfig (`~/.kube/con
 ```
 make run
 ```
+
+### Using Skaffold for Development
+
+[Skaffold](https://skaffold.dev/) enables continuous development with automatic rebuilds and redeployment:
+
+```bash
+# Basic development (no OAuth2)
+skaffold dev
+
+# Development with OAuth2/OIDC (uses Dex for authentication)
+skaffold dev -p oidc-dev
+```
+
+Press Ctrl+C to stop and clean up resources.
