@@ -1389,6 +1389,55 @@ async def get_oauth2_client():
     return client, dict(authorize_url.query)
 
 
+async def refresh_access_token(session):
+    """Attempt to refresh the access token using the stored refresh token.
+
+    Returns
+    -------
+    bool
+        True if refresh was successful, False otherwise
+
+    """
+    refresh_token = session.get("refresh_token")
+    logger.debug(
+        f"Attempting to refresh access token, refresh_token present: {bool(refresh_token)}"
+    )
+    if not refresh_token:
+        logger.warning("No refresh token found in session, cannot refresh")
+        return False
+
+    try:
+        client, _ = await get_oauth2_client()
+
+        # Use aioauth_client's get_access_token method with refresh_token grant type
+        new_access_token, data = await client.get_access_token(
+            refresh_token, grant_type="refresh_token"
+        )
+
+        expires_in = data.get("expires_in", ONE_WEEK)
+        new_refresh_token = data.get("refresh_token")
+
+        # Update session with new tokens
+        session["access_token"] = new_access_token
+        if expires_in > FIVE_MINUTES * 2:
+            session["expires"] = time.time() + expires_in - FIVE_MINUTES
+        else:
+            session["expires"] = time.time() + expires_in
+
+        # Update refresh token if a new one was provided
+        if new_refresh_token:
+            session["refresh_token"] = new_refresh_token
+
+        logger.debug("Successfully refreshed OAuth2 access token")
+        return True
+
+    except Exception as e:
+        logger.warning(f"OAuth2 refresh failed: {type(e).__name__}: {e}")
+        # Clear invalid refresh token to prevent retry loops
+        session.pop("refresh_token", None)
+        return False
+
+
 @web.middleware
 async def auth(request, handler):
     path = request.rel_url.path
@@ -1426,6 +1475,14 @@ async def auth(request, handler):
                 raise web.HTTPForbidden(text="Access Denied")
         session["access_token"] = access_token
         session["expires"] = expires
+        # Store refresh token if provided
+        refresh_token = data.get("refresh_token")
+        logger.debug(
+            f"OAuth2 callback: refresh_token in response: {bool(refresh_token)}"
+        )
+        if refresh_token:
+            session["refresh_token"] = refresh_token
+            logger.debug("Stored refresh_token in session")
         # we MUST use `return` here instead of raising an exception
         # this is a workaround for https://github.com/aio-libs/aiohttp-session/issues/396
         # (aiohttp 3.7.3 and aiohttp-session 2.9.0)
@@ -1433,22 +1490,28 @@ async def auth(request, handler):
     elif path != HEALTH_PATH:
         session = await get_session(request)
         if not session.get("access_token") or session.get("expires", 0) < time.time():
-            client, params = await get_oauth2_client()
-            # note that Google OAuth provider requires the redirect_uri here
-            # (it's optional according to https://tools.ietf.org/html/rfc6749#section-4.1.1)
-            redirect_uri = str(request.url.with_path(OAUTH2_CALLBACK_PATH))
-            params["redirect_uri"] = redirect_uri
-            # NOTE: we use urlsafe Base64 because some OAuth providers choke on certain characters
-            # see https://codeberg.org/hjacobs/kube-web-view/issues/74
-            # The url is put into a JSON object since some OAuth providers return an error if the
-            # state query param is not long enough (not enough entropy).
-            params["state"] = base64.urlsafe_b64encode(
-                json.dumps({"original_url": str(request.rel_url)}).encode("utf-8")
+            logger.debug(
+                f"Token expired or missing, attempting refresh. Has access_token: {bool(session.get('access_token'))}, expires: {session.get('expires', 0)}, current_time: {time.time()}"
             )
-            scope = os.getenv("OAUTH2_SCOPE")
-            if scope:
-                params["scope"] = scope
-            raise web.HTTPFound(location=client.get_authorize_url(**params))
+            # Try to refresh token first before forcing re-authentication
+            if not await refresh_access_token(session):
+                # Refresh failed, redirect to OAuth provider for re-authentication
+                client, params = await get_oauth2_client()
+                # note that Google OAuth provider requires the redirect_uri here
+                # (it's optional according to https://tools.ietf.org/html/rfc6749#section-4.1.1)
+                redirect_uri = str(request.url.with_path(OAUTH2_CALLBACK_PATH))
+                params["redirect_uri"] = redirect_uri
+                # NOTE: we use urlsafe Base64 because some OAuth providers choke on certain characters
+                # see https://codeberg.org/hjacobs/kube-web-view/issues/74
+                # The url is put into a JSON object since some OAuth providers return an error if the
+                # state query param is not long enough (not enough entropy).
+                params["state"] = base64.urlsafe_b64encode(
+                    json.dumps({"original_url": str(request.rel_url)}).encode("utf-8")
+                )
+                scope = os.getenv("OAUTH2_SCOPE")
+                if scope:
+                    params["scope"] = scope
+                raise web.HTTPFound(location=client.get_authorize_url(**params))
     response = await handler(request)
     return response
 
